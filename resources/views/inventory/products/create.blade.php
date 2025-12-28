@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="main-panel">
+    <div class="content-wrapper">
     <h3>Add Product</h3>
 
     <form method="POST" action="{{ route('products.store') }}">
@@ -45,7 +46,9 @@
 
         <button class="btn btn-primary">Save</button>
     </form>
+    </div>
 </div>
+
 
 {{-- Dependent Dropdown Script --}}
 <script>
