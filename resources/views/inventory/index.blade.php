@@ -50,6 +50,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Category</th>
                     <th>Product</th>
                     <th>Opening</th>
                     <th>Produced</th>
@@ -61,6 +62,7 @@
             <tbody>
                 @foreach($items as $item)
                     <tr>
+                        <td>{{ $item->product->category }}</td>
                         <td>{{ $item->product->name }}</td>
                         <td>{{ $item->opening_stock }}</td>
                         <td>{{ $item->total_produced }}</td>

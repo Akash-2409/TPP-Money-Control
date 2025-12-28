@@ -30,12 +30,32 @@
 
                     <div class="col-md-3">
                         <label>Type</label>
-                        <select name="type" class="form-control" required>
+                        <select name="type" id="type" class="form-control" required>
                             <option value="income">Income</option>
                             <option value="expense">Expense</option>
                         </select>
                     </div>
+                    <div class="col-md-3 d-none" id="expenseCategoryDiv">
+                        <label>Expense Category</label>
+                        <select name="expense_category" id="expense_category" class="form-control">
+                            <option value="">Select</option>
+                            <option value="machinery">Machinery Expense</option>
+                            <option value="other_expances">Other Expances</option>
+                            <option value="petrol">Petrol</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="worker_udhaar">Worker Udhaar</option>
+                        </select>
+                    </div>
 
+                    <div class="col-md-3 d-none" id="workerDiv">
+                        <label>Worker</label>
+                        <select name="worker_id" class="form-control">
+                            <option value="">Select Worker</option>
+                            @foreach($workers as $worker)
+                                <option value="{{ $worker->id }}">{{ $worker->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="col-md-3">
                         <label>Amount</label>
                         <input type="number" step="0.01" name="amount" class="form-control" required>
@@ -136,4 +156,16 @@
     </div>
 
 </div>
+<script>
+document.getElementById('type').addEventListener('change', function () {
+    document.getElementById('expenseCategoryDiv')
+        .classList.toggle('d-none', this.value !== 'expense');
+});
+
+document.getElementById('expense_category').addEventListener('change', function () {
+    document.getElementById('workerDiv')
+        .classList.toggle('d-none', this.value !== 'worker_udhaar');
+});
+</script>
+
 @endsection

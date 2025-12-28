@@ -42,7 +42,9 @@
             @endforeach
         </tbody>
     </table>
-
-    {{ $products->links() }}
+    <div class="d-flex justify-content-center mt-3">
+        {{ $products->links() }}
+    </div>
+    <!-- {{ $products->links() }} -->
 </div>
 @endsection

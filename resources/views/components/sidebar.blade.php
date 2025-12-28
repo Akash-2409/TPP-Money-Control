@@ -91,6 +91,28 @@
     <h6 class="text-secondary">Inventory</h6>
 
     <li class="nav-item mb-2">
+        <a class="nav-link text-white {{ request()->routeIs('sales.*') ? 'active-menu' : '' }}" 
+        href="{{ route('sales.index') }}">
+        <i class="fa-solid fa-cart-shopping"></i> Sales / Dispatch
+        </a>
+    </li>
+
+    <li class="nav-item mb-2">
+        <a class="nav-link text-white {{ request()->routeIs('purchases.*') ? 'active-menu' : '' }}"
+            href="{{ route('purchases.index') }}">
+            <i class="fa-solid fa-file-invoice"></i> Purchases
+        </a>
+    </li>
+    <li class="nav-item mb-2">
+        <a class="nav-link text-white {{ request()->routeIs('materials.*') ? 'active-menu' : '' }}"
+            href="{{ route('materials.index') }}">
+            <i class="fa-solid fa-boxes-stacked"></i> Materials
+        </a>
+    </li>
+
+    
+
+    <li class="nav-item mb-2">
         <a class="nav-link text-white {{ request()->routeIs('inventory.index') ? 'active-menu' : '' }}"
            href="{{ route('inventory.index') }}">
            <i class="fa-solid fa-warehouse"></i> Inventory
@@ -124,9 +146,17 @@
     <h6 class="text-secondary">Reports</h6>
 
     <li class="nav-item mb-2">
-        <a class="nav-link text-white" href="#">
-           <i class="fa-solid fa-chart-line"></i> Summary Reports
+        <a class="nav-link text-white {{ request()->routeIs('report.product.monthly') ? 'active-menu' : '' }}"
+        href="{{ route('report.product.monthly') }}">
+        <i class="fa-solid fa-chart-bar"></i> Product Monthly Report
         </a>
     </li>
+    <li class="nav-item mb-2">
+        <a class="nav-link text-white {{ request()->routeIs('report.stock.ledger') ? 'active-menu' : '' }}"
+        href="{{ route('report.stock.ledger') }}">
+        <i class="fa-solid fa-book"></i> Stock Ledger Report
+        </a>
+    </li>
+
 
 </div>

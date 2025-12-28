@@ -44,7 +44,10 @@ class ProductionController extends Controller
             });
         }
 
-        $productions = $query->orderBy('date', 'desc')->paginate(20)->withQueryString();
+        // $productions = $query->orderBy('date', 'desc')->paginate(20)->withQueryString();
+        $productions = $query->orderBy('date', 'desc')
+            ->get()
+            ->groupBy('date');
         $products = Product::orderBy('name')->get();
 
         return view('productions.index', compact('productions', 'products', 'month', 'q'));
@@ -53,34 +56,65 @@ class ProductionController extends Controller
     /**
      * Store a new production entry.
      */
+    // public function store(Request $request)
+    // {
+        
+    //     // $this->authorize('create', DailyProduction::class);
+    //     // dd($request->all());
+        
+    //     $data = $request->validate([
+    //         'product_id' => 'required|exists:products,id',
+    //         'production_qty' => 'required|numeric|min:0',
+    //         'date' => 'required|date',
+    //         'note' => 'nullable|string|max:2000',
+    //     ]);
+    //     DailyProduction::create([
+    //         'user_id' => Auth::id(),
+    //         'product_id' => $request->product_id,
+    //         'production_qty' => $request->production_qty,
+    //         'date' => $request->date,
+    //         'note' => $request->note,
+    //         // 'category_id' => null // never used now
+    //     ]);
+
+
+    //     // Update inventory for this product
+    //     $this->inventoryService->recalculateForProduct($data['product_id']);
+
+    //     return back()->with('success', 'Production added successfully.');
+    // }
     public function store(Request $request)
     {
-        
-        // $this->authorize('create', DailyProduction::class);
-        // dd($request->all());
-        
         $data = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'production_qty' => 'required|numeric|min:0',
             'date' => 'required|date',
+            'product_id' => 'required|array',
+            'production_qty' => 'required|array',
             'note' => 'nullable|string|max:2000',
         ]);
-        DailyProduction::create([
-            'user_id' => Auth::id(),
-            'product_id' => $request->product_id,
-            'production_qty' => $request->production_qty,
-            'date' => $request->date,
-            'note' => $request->note,
-            // 'category_id' => null // never used now
-        ]);
+    
+        foreach ($request->product_id as $index => $productId) {
+    
+            DailyProduction::create([
+                'product_id'     => $productId,
+                'production_qty' => $request->production_qty[$index],
+                'date'           => $request->date,
+                'note'           => $request->note,
+                'user_id'        => auth()->id(),
+            ]);
+        }
 
+         // Update inventory for this product
+        // $this->inventoryService->recalculateForProduct($data['product_id']);
+        foreach ($data['product_id'] as $productId) {
+            $this->inventoryService->recalculateForProduct($productId);
+        }
+        
 
-        // Update inventory for this product
-        $this->inventoryService->recalculateForProduct($data['product_id']);
-
-        return back()->with('success', 'Production added successfully.');
+    //     return back()->with('success', 'Production added successfully.');
+    
+        return redirect()->back()->with('success', 'Production added successfully');
     }
-
+    
     /**
      * Delete a production entry.
      */

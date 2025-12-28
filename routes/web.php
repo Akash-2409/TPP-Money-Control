@@ -15,9 +15,14 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkerTransactionController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\ProductReportController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\MaterialController;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 // Route::get('/dashboard', function () {
@@ -58,6 +63,19 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('workers', WorkerController::class);
 
 
+    Route::resource('sales', SaleController::class)->only(['index','create','store']);
+
+    Route::get('/report/product-monthly', 
+        [ProductReportController::class, 'monthly']
+    )->name('report.product.monthly');
+
+    Route::get('/report/stock-ledger', 
+        [ProductReportController::class, 'stockLedger']
+    )->name('report.stock.ledger');
+
+    Route::resource('purchases', PurchaseController::class)->only(['index','create','store']);
+    Route::resource('materials', MaterialController::class)->only(['index','create','store']);
+
 });
 
 // Route::resource('workers', WorkerController::class);
@@ -73,6 +91,11 @@ Route::get('reports/workers/monthly', [WorkerReportController::class, 'monthly']
 Route::resource('categories', CategoryController::class);
 
 Route::view('/test', 'test');
+
+Route::get('/test-pdf', function () {
+    $pdf = Pdf::loadHTML('<h1>PDF Working</h1>');
+    return $pdf->download('test.pdf');
+});
 
 
 require __DIR__.'/auth.php';
