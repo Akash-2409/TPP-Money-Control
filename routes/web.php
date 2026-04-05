@@ -42,6 +42,8 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('products', ProductController::class);
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::get('/transactions/{entry}/edit', [TransactionController::class, 'edit'])->name('transactions.edit');
+    Route::put('/transactions/{entry}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('/transactions/{entry}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
     Route::get('/production', [ProductionController::class, 'index'])->name('production.index');
     Route::post('/production', [ProductionController::class, 'store'])->name('production.store');
@@ -64,6 +66,7 @@ Route::middleware(['auth'])->group(function(){
 
 
     Route::resource('sales', SaleController::class)->only(['index','create','store']);
+    Route::get('/sales/{sale}/invoice', [SaleController::class, 'invoice'])->name('sales.invoice');
 
     Route::get('/report/product-monthly', 
         [ProductReportController::class, 'monthly']
@@ -73,8 +76,14 @@ Route::middleware(['auth'])->group(function(){
         [ProductReportController::class, 'stockLedger']
     )->name('report.stock.ledger');
 
+    Route::get('/report/stock-ledger/export', 
+        [ProductReportController::class, 'exportStockLedger']
+    )->name('report.stock.export');
+
     Route::resource('purchases', PurchaseController::class)->only(['index','create','store']);
     Route::resource('materials', MaterialController::class)->only(['index','create','store']);
+    Route::resource('parties', App\Http\Controllers\PartyController::class);
+    Route::get('/api/parties/{party}/details', [App\Http\Controllers\PartyController::class, 'getPartyDetails'])->name('parties.details');
 
 });
 

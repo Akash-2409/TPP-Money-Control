@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Inventory;
 use App\Models\DailyProduction;
 use App\Models\Product;
+use App\Models\Sale;
 
 class InventoryServices
 {
@@ -20,17 +21,14 @@ class InventoryServices
         }
 
         // Opening stock (from inventory table)
-        $inventory = $product->inventory;
-
-        if (!$inventory) {
-            return;
-        }
+        // If inventory doesn't exist, create it with 0 opening stock
+        $inventory = $product->inventory ?: Inventory::create(['product_id' => $productId, 'opening_stock' => 0]);
 
         // Total produced
         $totalProduced = DailyProduction::where('product_id', $productId)->sum('production_qty');
 
-        // Total sold (if you add sales later)
-        $totalSold = 0;
+        // Total sold
+        $totalSold = Sale::where('product_id', $productId)->sum('quantity');
 
         // Update inventory
         $inventory->update([

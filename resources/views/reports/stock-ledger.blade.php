@@ -25,6 +25,15 @@
                         @endforeach
                     </select>
                 </div>
+                
+                <div class="col-md-6 d-flex align-items-end justify-content-end">
+                    <a href="{{ route('report.stock.export', ['month' => $month, 'product_id' => $productId]) }}" class="btn btn-success me-2">
+                        <i class="mdi mdi-file-excel"></i> Export CSV
+                    </a>
+                    <button type="button" onclick="window.print()" class="btn btn-dark">
+                        <i class="mdi mdi-printer"></i> Print PDF
+                    </button>
+                </div>
 
             </div>
         </form>

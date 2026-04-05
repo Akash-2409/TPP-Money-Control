@@ -7,8 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Sale extends Model
 {
     protected $fillable = [
-        'product_id', 'user_id', 'date', 'quantity', 'customer', 'note'
+        'product_id', 'user_id', 'date', 'quantity', 'customer', 'party_id', 'note','village', 'vehicle_no', 'rate', 'total', 'labour_charge',
+        'tax_type', 'gst_rate', 'taxable_amount', 'cgst_amount', 'sgst_amount', 'igst_amount'
     ];
+
+    public function party()
+    {
+        return $this->belongsTo(Party::class);
+    }
 
     public function product()
     {

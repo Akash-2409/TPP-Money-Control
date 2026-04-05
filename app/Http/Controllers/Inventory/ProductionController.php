@@ -93,14 +93,26 @@ class ProductionController extends Controller
         ]);
     
         foreach ($request->product_id as $index => $productId) {
-    
-            DailyProduction::create([
-                'product_id'     => $productId,
-                'production_qty' => $request->production_qty[$index],
-                'date'           => $request->date,
-                'note'           => $request->note,
-                'user_id'        => auth()->id(),
-            ]);
+            $existing = DailyProduction::where('product_id', $productId)
+                ->where('date', $request->date)
+                ->where('user_id', auth()->id())
+                ->first();
+
+            if ($existing) {
+                $existing->production_qty += $request->production_qty[$index];
+                if ($request->note) {
+                    $existing->note = $existing->note ? $existing->note . "\n" . $request->note : $request->note;
+                }
+                $existing->save();
+            } else {
+                DailyProduction::create([
+                    'product_id'     => $productId,
+                    'production_qty' => $request->production_qty[$index],
+                    'date'           => $request->date,
+                    'note'           => $request->note,
+                    'user_id'        => auth()->id(),
+                ]);
+            }
         }
 
          // Update inventory for this product

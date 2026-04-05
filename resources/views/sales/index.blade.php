@@ -20,6 +20,7 @@
                     <th>Qty Sold</th>
                     <th>Customer</th>
                     <th>Note</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,8 +29,19 @@
                         <td>{{ $s->date }}</td>
                         <td>{{ $s->product->name }}</td>
                         <td>{{ $s->quantity }}</td>
-                        <td>{{ $s->customer }}</td>
+                        <td>
+                            @if($s->party)
+                                <span class="text-primary font-weight-bold"><a href="{{ route('parties.edit', $s->party_id) }}">{{ $s->party->name }}</a></span>
+                            @else
+                                {{ $s->customer }}
+                            @endif
+                        </td>
                         <td>{{ $s->note }}</td>
+                        <td>
+                            <a href="{{ route('sales.invoice', $s->id) }}" class="btn btn-sm btn-info text-white" target="_blank" title="Print Invoice">
+                                <i class="mdi mdi-printer"></i> Print Invoice
+                            </a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

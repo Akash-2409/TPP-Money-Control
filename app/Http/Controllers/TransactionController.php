@@ -105,12 +105,49 @@ class TransactionController extends Controller
     }
     
 
+    public function edit(Entry $entry)
+    {
+        if ($entry->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $workers = Worker::select('id','name')->get();
+        // Since we are adding an edit view, we need category options too if we use them, but we'll use same ones as index
+        return view('transactions.edit', compact('entry', 'workers'));
+    }
+
+    public function update(Request $request, Entry $entry)
+    {
+        if ($entry->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'type' => 'required|in:income,expense',
+            'amount' => 'required|numeric|min:0.01',
+            'date' => 'required|date',
+            'expense_category' => 'nullable|string',
+            'worker_id' => 'nullable|exists:workers,id',
+            'description' => 'nullable|string|max:2000',
+        ]);
+
+        $entry->update([
+            'type' => $request->type,
+            'amount' => $request->amount,
+            'date' => $request->date,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('transactions.index')->with('success', 'Transaction updated.');
+    }
+
     public function destroy(Entry $entry)
     {
         if ($entry->user_id !== Auth::id()) {
             abort(403);
         }
 
+        // If it was worker udhaar, it might be complicated to reverse, but for now we just delete entry
         $entry->delete();
 
         return back()->with('success', 'Entry deleted.');
