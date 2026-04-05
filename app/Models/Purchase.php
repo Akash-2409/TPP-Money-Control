@@ -14,9 +14,15 @@ class Purchase extends Model
         'rate',
         'amount',
         'supplier',
+        'party_id',
         'bill_no',
         'note'
     ];
+
+    public function party()
+    {
+        return $this->belongsTo(Party::class);
+    }
 
     public function material()
     {

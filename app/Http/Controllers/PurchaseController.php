@@ -11,14 +11,15 @@ class PurchaseController extends Controller
 {
     public function index()
     {
-        $purchases = Purchase::with('material')->orderBy('date','desc')->paginate(25);
+        $purchases = Purchase::with(['material', 'party'])->orderBy('date','desc')->paginate(25);
         return view('purchases.index', compact('purchases'));
     }
 
     public function create()
     {
         $materials = Material::orderBy('name')->get();
-        return view('purchases.create', compact('materials'));
+        $parties = \App\Models\Party::whereIn('type', ['supplier', 'both'])->orderBy('name')->get();
+        return view('purchases.create', compact('materials', 'parties'));
     }
 
     public function store(Request $request)
@@ -29,6 +30,7 @@ class PurchaseController extends Controller
             'quantity' => 'required|numeric|min:0.001',
             'rate' => 'nullable|numeric|min:0',
             'supplier' => 'nullable|string',
+            'party_id' => 'nullable|exists:parties,id',
             'bill_no' => 'nullable|string',
             'note' => 'nullable|string',
         ]);
@@ -42,7 +44,9 @@ class PurchaseController extends Controller
             'quantity' => $request->quantity,
             'rate' => $request->rate,
             'amount' => $amount,
+            // Fallback for supplier name or selected party_id
             'supplier' => $request->supplier,
+            'party_id' => $request->party_id,
             'bill_no' => $request->bill_no,
             'note' => $request->note,
         ]);

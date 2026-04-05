@@ -11,4 +11,12 @@ protected $fillable = ['product_id','production_qty','date','user_id','note'];
 
 public function product(){ return $this->belongsTo(Product::class); }
 public function user(){ return $this->belongsTo(User::class); }
+
+public function scopeForUserAccess($query, $user)
+{
+    if ($user->role !== 'superadmin') {
+        return $query->where('user_id', $user->id);
+    }
+    return $query;
+}
 }

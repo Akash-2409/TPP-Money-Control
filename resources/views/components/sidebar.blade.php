@@ -3,33 +3,16 @@
 
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     {{-- Brand --}}
-    <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-        <a class="sidebar-brand brand-logo text-white text-decoration-none" href="{{ route('dashboard') }}">
-            Money Notebook
+    <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center">
+        <a class="sidebar-brand brand-logo text-white text-decoration-none" href="{{ route('dashboard') }}" style="font-weight: 700; font-size: 1.2rem; letter-spacing: 1px;">
+            <i class="mdi mdi-factory text-primary mr-2"></i> MFG-ERP
         </a>
         <a class="sidebar-brand brand-logo-mini text-white" href="{{ route('dashboard') }}">
-            MN
+            <i class="mdi mdi-factory text-primary"></i>
         </a>
     </div>
 
     <ul class="nav">
-
-        {{-- Profile --}}
-        <li class="nav-item profile">
-            <div class="profile-desc">
-                <div class="profile-pic">
-                    <div class="count-indicator">
-                        <img class="img-xs rounded-circle"
-                             src="{{ asset('assets/images/faces/face15.jpg') }}" alt="profile">
-                        <span class="count bg-success"></span>
-                    </div>
-                    <div class="profile-name">
-                        <h5 class="mb-0 font-weight-normal">{{ auth()->user()->name ?? 'Admin' }}</h5>
-                        <span>Administrator</span>
-                    </div>
-                </div>
-            </div>
-        </li>
 
         {{-- Navigation --}}
         <li class="nav-item nav-category">
@@ -129,6 +112,21 @@
                     <i class="mdi mdi-warehouse"></i>
                 </span>
                 <span class="menu-title">Inventory</span>
+            </a>
+        </li>
+
+        {{-- Master Data --}}
+        <li class="nav-item nav-category">
+            <span class="nav-link">Account Master</span>
+        </li>
+
+        <li class="nav-item menu-items">
+            <a class="nav-link {{ request()->routeIs('parties.*') ? 'active' : '' }}"
+               href="{{ route('parties.index') }}">
+                <span class="menu-icon">
+                    <i class="mdi mdi-account-card-details"></i>
+                </span>
+                <span class="menu-title">Parties</span>
             </a>
         </li>
 

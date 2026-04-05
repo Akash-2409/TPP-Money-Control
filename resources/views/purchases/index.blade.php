@@ -32,7 +32,13 @@
                         <td>{{ $p->quantity }}</td>
                         <td>{{ $p->rate }}</td>
                         <td>{{ $p->amount }}</td>
-                        <td>{{ $p->supplier }}</td>
+                        <td>
+                            @if($p->party)
+                                <span class="text-primary font-weight-bold"><a href="{{ route('parties.edit', $p->party_id) }}">{{ $p->party->name }}</a></span>
+                            @else
+                                {{ $p->supplier }}
+                            @endif
+                        </td>
                         <td>{{ $p->bill_no }}</td>
                     </tr>
                 @endforeach
