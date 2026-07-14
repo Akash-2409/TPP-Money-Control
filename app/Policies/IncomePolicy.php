@@ -14,6 +14,6 @@ class IncomePolicy
 
     public function delete(User $user, Income $income)
     {
-        return $user->role === 'superadmin' || $income->user_id === $user->id;
+        return $user->hasRole('superadmin') || $income->user_id === $user->id;
     }
 }

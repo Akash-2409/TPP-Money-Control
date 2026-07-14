@@ -38,7 +38,7 @@
                 <img class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;" src="{{ asset('assets/images/faces/face15.jpg') }}" alt="profile">
                 <div class="d-none d-sm-flex flex-column align-items-start me-2">
                     <span class="text-dark fw-bold" style="font-size: 0.85rem;">{{ auth()->user()->name ?? 'Admin User' }}</span>
-                    <span class="text-muted" style="font-size: 0.75rem;">Administrator</span>
+                    <span class="text-muted text-capitalize" style="font-size: 0.75rem;">{{ auth()->user()->roles->pluck('name')->join(', ') ?: 'User' }}</span>
                 </div>
             </a>
             

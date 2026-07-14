@@ -43,6 +43,31 @@
 
     <!-- Custom Page JS (Dashboard Charts) -->
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    
+    <!-- SweetAlert2 for Popups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: '{{ session('error') }}',
+                confirmButtonColor: '#0f172a'
+            });
+            @endif
+
+            @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '{{ session('success') }}',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            @endif
+        });
+    </script>
 @stack('scripts')
 
 </body>

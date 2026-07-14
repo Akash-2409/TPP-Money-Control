@@ -29,7 +29,7 @@ class WorkerPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'superadmin';
+        return $user->hasRole('superadmin');
     }
 
     /**
@@ -37,7 +37,7 @@ class WorkerPolicy
      */
     public function update(User $user, Worker $worker): bool
     {
-        return $user->role === 'superadmin';
+        return $user->hasRole('superadmin');
     }
 
     /**

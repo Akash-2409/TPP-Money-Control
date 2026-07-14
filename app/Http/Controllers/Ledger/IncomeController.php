@@ -25,7 +25,7 @@ class IncomeController extends Controller
         $query = Entry::where('type', 'income')->with('user');
 
         // normal user sees only their data
-        if (Auth::user()->role !== 'superadmin') {
+        if (!Auth::user()->hasRole('superadmin')) {
             $query->where('user_id', Auth::id());
         }
 
@@ -79,7 +79,7 @@ class IncomeController extends Controller
      */
     public function destroy(Entry $income)
     {
-        if (Auth::user()->role !== 'superadmin' && $income->user_id !== Auth::id()) {
+        if (!Auth::user()->hasRole('superadmin') && $income->user_id !== Auth::id()) {
             abort(403);
         }
 

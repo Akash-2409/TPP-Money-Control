@@ -12,7 +12,7 @@ class WorkerController extends Controller
     {
         $query = Worker::query();
 
-        if (Auth::user()->role !== 'superadmin') {
+        if (!Auth::user()->hasRole('superadmin')) {
             $query->where('created_by', Auth::id());
         }
 

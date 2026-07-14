@@ -28,7 +28,7 @@ class WorkerAdvanceController extends Controller
         $query = WorkerTransaction::with('worker');
 
         // normal user should see only his workers' transactions
-        if (Auth::user()->role !== 'superadmin') {
+        if (!Auth::user()->hasRole('superadmin')) {
             $query->whereHas('worker', function($sub) {
                 $sub->where('created_by', Auth::id());
             });
@@ -52,7 +52,7 @@ class WorkerAdvanceController extends Controller
         $transactions = $query->orderBy('date', 'desc')->paginate(20)->withQueryString();
 
         // for dropdown
-        $workers = (Auth::user()->role === 'superadmin')
+        $workers = (Auth::user()->hasRole('superadmin'))
             ? Worker::orderBy('name')->get()
             : Worker::where('created_by', Auth::id())->orderBy('name')->get();
 
@@ -66,7 +66,7 @@ class WorkerAdvanceController extends Controller
     {
         $this->authorize('create', WorkerTransaction::class);
 
-        $workers = (Auth::user()->role === 'superadmin')
+        $workers = (Auth::user()->hasRole('superadmin'))
             ? Worker::orderBy('name')->get()
             : Worker::where('created_by', Auth::id())->orderBy('name')->get();
 
@@ -89,7 +89,7 @@ class WorkerAdvanceController extends Controller
         ]);
 
         // normal user cannot give transaction to other users' workers
-        if (Auth::user()->role !== 'superadmin') {
+        if (!Auth::user()->hasRole('superadmin')) {
             $workerCheck = Worker::findOrFail($data['worker_id']);
             if ($workerCheck->created_by !== Auth::id()) {
                 abort(403, "You cannot add transactions for this worker.");
@@ -116,7 +116,7 @@ class WorkerAdvanceController extends Controller
         $this->authorize('delete', $workerTransaction);
 
         // normal user can only delete their own workers' transactions
-        if (Auth::user()->role !== 'superadmin') {
+        if (!Auth::user()->hasRole('superadmin')) {
             if ($workerTransaction->worker->created_by !== Auth::id()) {
                 abort(403, "You cannot delete this record.");
             }

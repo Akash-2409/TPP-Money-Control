@@ -37,53 +37,41 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function(){
-    Route::resource('incomes', IncomeController::class)->only(['index','create','store','destroy']);
-    Route::resource('expenses', ExpenseController::class)->only(['index','create','store','destroy']);
-    Route::resource('products', ProductController::class);
-    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
-    Route::get('/transactions/{entry}/edit', [TransactionController::class, 'edit'])->name('transactions.edit');
-    Route::put('/transactions/{entry}', [TransactionController::class, 'update'])->name('transactions.update');
-    Route::delete('/transactions/{entry}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
-    Route::get('/production', [ProductionController::class, 'index'])->name('production.index');
-    Route::post('/production', [ProductionController::class, 'store'])->name('production.store');
-    // Route::resource('productions', ProductionController::class)->only(['index', 'store', 'destroy']);
-    Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+    Route::resource('incomes', IncomeController::class)->only(['index','create','store','destroy'])->middleware('can:manage sales');
+    Route::resource('expenses', ExpenseController::class)->only(['index','create','store','destroy'])->middleware('can:manage purchases');
+    Route::resource('products', ProductController::class)->middleware('can:manage inventory');
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index')->middleware('can:manage sales');
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store')->middleware('can:manage sales');
+    Route::get('/transactions/{entry}/edit', [TransactionController::class, 'edit'])->name('transactions.edit')->middleware('can:manage sales');
+    Route::put('/transactions/{entry}', [TransactionController::class, 'update'])->name('transactions.update')->middleware('can:manage sales');
+    Route::delete('/transactions/{entry}', [TransactionController::class, 'destroy'])->name('transactions.destroy')->middleware('can:manage sales');
+    Route::get('/production', [ProductionController::class, 'index'])->name('production.index')->middleware('can:manage inventory');
+    Route::post('/production', [ProductionController::class, 'store'])->name('production.store')->middleware('can:manage inventory');
+    
+    Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index')->middleware('can:manage inventory');
+    Route::post('/inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust')->middleware('can:manage inventory');
 
-    Route::post('/inventory/adjust', [InventoryController::class, 'adjust'])
-         ->name('inventory.adjust');
-
-
-    Route::post('/worker-transaction', 
-        [WorkerTransactionController::class, 'store']
-    )->name('worker.transaction.store');
-
-    Route::get('/workers/monthly-report', 
-        [WorkerTransactionController::class, 'monthlyReport']
-    )->name('workers.monthly');
-
+    Route::post('/worker-transaction', [WorkerTransactionController::class, 'store'])->name('worker.transaction.store');
+    Route::get('/workers/monthly-report', [WorkerTransactionController::class, 'monthlyReport'])->name('workers.monthly');
     Route::resource('workers', WorkerController::class);
 
+    Route::resource('sales', SaleController::class)->only(['index','create','store'])->middleware('can:manage sales');
+    Route::get('/sales/{sale}/invoice', [SaleController::class, 'invoice'])->name('sales.invoice')->middleware('can:manage sales');
 
-    Route::resource('sales', SaleController::class)->only(['index','create','store']);
-    Route::get('/sales/{sale}/invoice', [SaleController::class, 'invoice'])->name('sales.invoice');
+    Route::get('/report/product-monthly', [ProductReportController::class, 'monthly'])->name('report.product.monthly')->middleware('can:view reports');
+    Route::get('/report/stock-ledger', [ProductReportController::class, 'stockLedger'])->name('report.stock.ledger')->middleware('can:view reports');
+    Route::get('/report/stock-ledger/export', [ProductReportController::class, 'exportStockLedger'])->name('report.stock.export')->middleware('can:view reports');
 
-    Route::get('/report/product-monthly', 
-        [ProductReportController::class, 'monthly']
-    )->name('report.product.monthly');
+    Route::resource('purchases', PurchaseController::class)->only(['index','create','store'])->middleware('can:manage purchases');
+    Route::resource('materials', MaterialController::class)->only(['index','create','store'])->middleware('can:manage inventory');
+    
+    Route::resource('parties', App\Http\Controllers\PartyController::class)->middleware('role_or_permission:superadmin');
+    Route::get('/api/parties/{party}/details', [App\Http\Controllers\PartyController::class, 'getPartyDetails'])->name('parties.details')->middleware('role_or_permission:superadmin');
 
-    Route::get('/report/stock-ledger', 
-        [ProductReportController::class, 'stockLedger']
-    )->name('report.stock.ledger');
-
-    Route::get('/report/stock-ledger/export', 
-        [ProductReportController::class, 'exportStockLedger']
-    )->name('report.stock.export');
-
-    Route::resource('purchases', PurchaseController::class)->only(['index','create','store']);
-    Route::resource('materials', MaterialController::class)->only(['index','create','store']);
-    Route::resource('parties', App\Http\Controllers\PartyController::class);
-    Route::get('/api/parties/{party}/details', [App\Http\Controllers\PartyController::class, 'getPartyDetails'])->name('parties.details');
+    // User & Rights Management
+    Route::resource('users', App\Http\Controllers\UserController::class)
+         ->except(['show', 'destroy'])
+         ->middleware('role:superadmin');
 
 });
 

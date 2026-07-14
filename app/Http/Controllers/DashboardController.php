@@ -37,7 +37,7 @@ class DashboardController extends Controller
     //         ->whereYear('date', $year)
     //         ->whereMonth('date', $month);
 
-    //     if ($user->role !== 'superadmin') {
+    //     if (!$user->hasRole('superadmin')) {
     //         $incomeQuery->where('user_id', $user->id);
     //     }
 
@@ -50,7 +50,7 @@ class DashboardController extends Controller
     //         ->whereYear('date', $year)
     //         ->whereMonth('date', $month);
 
-    //     if ($user->role !== 'superadmin') {
+    //     if (!$user->hasRole('superadmin')) {
     //         $expenseQuery->where('user_id', $user->id);
     //     }
 
@@ -58,14 +58,14 @@ class DashboardController extends Controller
 
     //     // Daily production (current month)
     //     $prodQuery = DailyProduction::whereYear('date', $year)->whereMonth('date', $month);
-    //     if ($user->role !== 'superadmin') {
+    //     if (!$user->hasRole('superadmin')) {
     //         $prodQuery->where('user_id', $user->id);
     //     }
     //     $monthlyProduction = $prodQuery->sum('production_qty');
 
     //     // Worker transactions (uddhar & salary paid)
     //     $workerTxQuery = WorkerTransaction::whereYear('date', $year)->whereMonth('date', $month);
-    //     if ($user->role !== 'superadmin') {
+    //     if (!$user->hasRole('superadmin')) {
     //         $workerTxQuery->whereHas('worker', function($q) use ($user) {
     //             $q->where('created_by', $user->id);
     //         });
@@ -75,7 +75,7 @@ class DashboardController extends Controller
     //     $monthlySalaryPaid = WorkerTransaction::whereYear('date',$year)
     //         ->whereMonth('date',$month)
     //         ->where('type','salary_payment')
-    //         ->when($user->role !== 'superadmin', function($q) use ($user) {
+    //         ->when(!$user->hasRole('superadmin'), function($q) use ($user) {
     //             $q->whereHas('worker', function($sub) use ($user){
     //                 $sub->where('created_by', $user->id);
     //             });
@@ -83,7 +83,7 @@ class DashboardController extends Controller
     //         ->sum('amount');
 
     //     // Worker count
-    //     $workerCount = ($user->role === 'superadmin')
+    //     $workerCount = ($user->hasRole('superadmin'))
     //         ? Worker::count()
     //         : Worker::where('created_by', $user->id)->count();
 
@@ -141,7 +141,7 @@ class DashboardController extends Controller
         /* ------------------------------------------------
             BASE ENTRY QUERY (ROLE FILTER)
         -------------------------------------------------*/
-        $entryQuery = Entry::when($user->role !== 'superadmin', function ($q) use ($user) {
+        $entryQuery = Entry::when(!$user->hasRole('superadmin'), function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
 
@@ -165,7 +165,7 @@ class DashboardController extends Controller
         /* ------------------------------------------------
             PRODUCTION
         -------------------------------------------------*/
-        $productionQuery = DailyProduction::when($user->role !== 'superadmin', function ($q) use ($user) {
+        $productionQuery = DailyProduction::when(!$user->hasRole('superadmin'), function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
 
@@ -177,14 +177,14 @@ class DashboardController extends Controller
         /* ------------------------------------------------
             WORKER DATA
         -------------------------------------------------*/
-        $workerCount = ($user->role === 'superadmin')
+        $workerCount = ($user->hasRole('superadmin'))
             ? Worker::count()
             : Worker::where('created_by', $user->id)->count();
 
         $monthlyUddhar = WorkerTransaction::where('type', 'uddhar')
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
-            ->when($user->role !== 'superadmin', function ($q) use ($user) {
+            ->when(!$user->hasRole('superadmin'), function ($q) use ($user) {
                 $q->whereHas('worker', function ($sub) use ($user) {
                     $sub->where('created_by', $user->id);
                 });
@@ -194,7 +194,7 @@ class DashboardController extends Controller
         $monthlySalaryPaid = WorkerTransaction::where('type', 'salary_payment')
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
-            ->when($user->role !== 'superadmin', function ($q) use ($user) {
+            ->when(!$user->hasRole('superadmin'), function ($q) use ($user) {
                 $q->whereHas('worker', function ($sub) use ($user) {
                     $sub->where('created_by', $user->id);
                 });
@@ -213,7 +213,7 @@ class DashboardController extends Controller
         $incomeChartData = Entry::where('type', 'income')
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
-            ->when($user->role !== 'superadmin', fn($q) => $q->where('user_id', $user->id))
+            ->when(!$user->hasRole('superadmin'), fn($q) => $q->where('user_id', $user->id))
             ->selectRaw('DATE(date) as day, SUM(amount) as total')
             ->groupBy('day')
             ->pluck('total', 'day');
@@ -221,7 +221,7 @@ class DashboardController extends Controller
         $expenseChartData = Entry::where('type', 'expense')
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
-            ->when($user->role !== 'superadmin', fn($q) => $q->where('user_id', $user->id))
+            ->when(!$user->hasRole('superadmin'), fn($q) => $q->where('user_id', $user->id))
             ->selectRaw('DATE(date) as day, SUM(amount) as total')
             ->groupBy('day')
             ->pluck('total', 'day');
@@ -252,7 +252,7 @@ class DashboardController extends Controller
             RECENT TRANSACTIONS
         -------------------------------------------------*/
         $recentEntries = Entry::latest()
-            ->when($user->role !== 'superadmin', fn($q) => $q->where('user_id', $user->id))
+            ->when(!$user->hasRole('superadmin'), fn($q) => $q->where('user_id', $user->id))
             ->take(5)
             ->get();
 

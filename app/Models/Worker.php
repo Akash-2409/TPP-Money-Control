@@ -13,7 +13,7 @@ public function transactions(){ return $this->hasMany(WorkerTransaction::class);
 
 public function scopeForUserAccess($query, $user)
 {
-    if ($user->role !== 'superadmin') {
+    if (!$user->hasRole('superadmin')) {
         return $query->where('created_by', $user->id);
     }
     return $query;

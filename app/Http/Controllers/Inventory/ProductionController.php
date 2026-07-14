@@ -29,7 +29,7 @@ class ProductionController extends Controller
 
         $query = DailyProduction::with('product', 'user');
 
-        if (Auth::user()->role !== 'superadmin') {
+        if (!Auth::user()->hasRole('superadmin')) {
             $query->where('user_id', Auth::id());
         }
 

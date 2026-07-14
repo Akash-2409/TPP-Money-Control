@@ -14,7 +14,7 @@ public function user(){ return $this->belongsTo(User::class); }
 
 public function scopeForUserAccess($query, $user)
 {
-    if ($user->role !== 'superadmin') {
+    if (!$user->hasRole('superadmin')) {
         return $query->where('user_id', $user->id);
     }
     return $query;

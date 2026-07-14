@@ -11,8 +11,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json(['error' => 'You do not have permission to perform this action.'], 403);
+            }
+            return redirect()->back()->with('error', 'Hold on! You do not have permission to access that page.');
+        });
     })->create();

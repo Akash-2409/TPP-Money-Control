@@ -26,7 +26,7 @@ class ExpenseController extends Controller
         $query = Expense::with('user');
 
         // normal users should see only their own expenses
-        if (Auth::user()->role !== 'superadmin') {
+        if (!Auth::user()->hasRole('superadmin')) {
             $query->where('user_id', Auth::id());
         }
 

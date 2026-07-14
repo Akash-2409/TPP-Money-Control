@@ -14,7 +14,7 @@ class IncomeController extends Controller
 
         $query = Entry::where('type', 'income')->orderBy('date', 'desc');
 
-        if ($user->role !== 'superadmin') {
+        if (!$user->hasRole('superadmin')) {
             $query->where('user_id', $user->id);
         }
 
@@ -46,7 +46,7 @@ class IncomeController extends Controller
 
     public function destroy(Entry $income)
     {
-        if (Auth::user()->role !== 'superadmin' && $income->user_id !== Auth::id()) {
+        if (!Auth::user()->hasRole('superadmin') && $income->user_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 

@@ -26,7 +26,7 @@ class WorkerReportController extends Controller
         [$year, $mon] = explode('-', $month);
 
         // Get workers list
-        if (Auth::user()->role === 'superadmin') {
+        if (Auth::user()->hasRole('superadmin')) {
             $workers = Worker::with(['transactions'])->orderBy('name')->get();
         } else {
             $workers = Worker::where('created_by', Auth::id())

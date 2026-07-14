@@ -31,6 +31,7 @@
         </li>
 
         {{-- Ledger --}}
+        @role('superadmin')
         <li class="nav-item nav-category">
             <span class="nav-link">Ledger</span>
         </li>
@@ -44,6 +45,7 @@
                 <span class="menu-title">Transactions</span>
             </a>
         </li>
+        @endrole
 
         {{-- Production --}}
         <li class="nav-item nav-category">
@@ -116,6 +118,7 @@
         </li>
 
         {{-- Master Data --}}
+        @role('superadmin')
         <li class="nav-item nav-category">
             <span class="nav-link">Account Master</span>
         </li>
@@ -129,6 +132,17 @@
                 <span class="menu-title">Parties</span>
             </a>
         </li>
+
+        <li class="nav-item menu-items">
+            <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"
+               href="{{ route('users.index') }}">
+                <span class="menu-icon">
+                    <i class="mdi mdi-shield-account"></i>
+                </span>
+                <span class="menu-title">Access Rights</span>
+            </a>
+        </li>
+        @endrole
 
         {{-- Workers --}}
         <li class="nav-item nav-category">
@@ -156,6 +170,7 @@
         </li>
 
         {{-- Reports --}}
+        @can('view reports')
         <li class="nav-item nav-category">
             <span class="nav-link">Reports</span>
         </li>
@@ -179,6 +194,7 @@
                 <span class="menu-title">Stock Ledger</span>
             </a>
         </li>
+        @endcan
 
     </ul>
 </nav>

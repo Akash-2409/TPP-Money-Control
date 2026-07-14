@@ -22,7 +22,7 @@ class WorkerController extends Controller
         $query = Worker::query();
 
         // Normal user sees only workers they created
-        if (Auth::user()->role !== 'superadmin') {
+        if (!Auth::user()->hasRole('superadmin')) {
             $query->where('created_by', Auth::id());
         }
 
